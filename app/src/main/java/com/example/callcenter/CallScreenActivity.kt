@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.telecom.Call
 import android.telecom.CallAudioState
 import android.telecom.InCallService
 import androidx.core.content.getSystemService
@@ -21,24 +22,17 @@ class CallScreenActivity : Activity() {
     private var speaker = false
     private var hold = false
 
-    var mLocalBroadcastManager: LocalBroadcastManager? = null
-    var mBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == Close_Call) {
-                finish()
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = CallScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
+        OngoingCall.state.subscribe {
+            if (it == Call.STATE_DISCONNECTED) {
+                finish()
+            }
+        }
         val mIntentFilter = IntentFilter()
         mIntentFilter.addAction("com.durga.action.close")
-        mLocalBroadcastManager!!.registerReceiver(mBroadcastReceiver, mIntentFilter)
 
         binding.disconnect.setOnClickListener {
             OngoingCall.disconnect()
@@ -69,11 +63,6 @@ class CallScreenActivity : Activity() {
                 OngoingCall.call?.unhold()
             hold = !hold
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mLocalBroadcastManager?.unregisterReceiver(mBroadcastReceiver)
     }
 
     @Deprecated("Deprecated in Java")

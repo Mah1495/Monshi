@@ -73,6 +73,7 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.4'
 
     def room_version = "2.5.1"
 

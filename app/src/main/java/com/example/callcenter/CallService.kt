@@ -8,6 +8,7 @@ import android.telecom.Call.Details.DIRECTION_INCOMING
 import android.telecom.CallAudioState
 import android.telecom.InCallService
 import androidx.core.app.NotificationCompat
+import androidx.core.content.getSystemService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class CallService : InCallService() {
@@ -34,7 +35,7 @@ class CallService : InCallService() {
         // a heads up notification which slides down over top of the current content.
         val builder = NotificationCompat.Builder(
             applicationContext,
-            IncomingChannel
+            OutGoingChannel
         )
         builder.setOngoing(true)
         builder.priority = NotificationCompat.PRIORITY_LOW
@@ -65,8 +66,9 @@ class CallService : InCallService() {
     private fun incoming(call: Call) {
         // Create an intent which triggers your fullscreen incoming call user interface.
         val intent = Intent(Intent.ACTION_MAIN, null)
-        intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
         intent.data = call.details.handle
+
         intent.setClass(applicationContext, CallIncomingActivity::class.java)
 
         val pendingIntent =
@@ -84,6 +86,7 @@ class CallService : InCallService() {
         // Set notification content intent to take user to the fullscreen UI if user taps on the
         // notification body.
         builder.setContentIntent(pendingIntent)
+        builder.setFullScreenIntent(pendingIntent, true)
         // Set full screen intent to trigger display of the fullscreen UI when the notification
         // manager deems it appropriate
 
@@ -100,11 +103,7 @@ class CallService : InCallService() {
     }
 
     override fun onCallRemoved(call: Call?) {
-        val localBroadcastManager = LocalBroadcastManager
-            .getInstance(this);
-        localBroadcastManager.sendBroadcast(
-            Intent(Close_Call)
-        )
+        applicationContext.getSystemService<NotificationManager>()?.cancel(123)
         OngoingCall.call = null
     }
 

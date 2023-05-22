@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
         android:allowBackup="true"
@@ -22,16 +23,27 @@
         android:theme="@style/Theme.CallCenter"
         tools:targetApi="31">
         <activity
+            android:name=".AppActivity"
+            android:exported="true"
+            android:label="@string/title_activity_app"
+            android:theme="@style/Theme.CallCenter">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".KeypadActivity"
             android:exported="false"
             android:label="@string/title_activity_keypad"
             android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
             android:name=".CallIncomingActivity"
-            android:exported="false"
             android:label="@string/title_activity_call_screen"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.CallCenter" />
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.CallCenter" >
+        </activity>
         <activity
             android:name=".DialerActivity"
             android:exported="true"
@@ -52,13 +64,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.CallCenter">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:label="@string/app_name">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".CallScreenActivity" />
 
