@@ -14,25 +14,43 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.callcenter.databinding.ActivityAppBinding
+import com.example.callcenter.entities.AppDb
+import com.example.callcenter.entities.CallLog
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 const val IncomingChannel = "incoming";
 const val OutGoingChannel = "outgoing"
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
+    @Inject
+    lateinit var db: AppDb
 
     private val roleManager: RoleManager by lazy {
         getSystemService(Context.ROLE_SERVICE) as RoleManager
-
     }
     private lateinit var binding: ActivityAppBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            val logs = db.logDao().getAll()
+            showLogs(logs.count())
+        }
+
         OngoingCall.state.subscribe {
             Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
             if (it != Call.STATE_RINGING) {
@@ -57,6 +75,10 @@ class AppActivity : AppCompatActivity() {
         requestRole()
         createChannel(IncomingChannel)
         createChannel(OutGoingChannel, NotificationManager.IMPORTANCE_LOW)
+    }
+
+    fun showLogs(logs: Int) {
+        Toast.makeText(this, "logs count $logs", Toast.LENGTH_SHORT).show()
     }
 
     fun requestRole() {

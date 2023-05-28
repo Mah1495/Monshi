@@ -12,7 +12,7 @@ import androidx.core.content.getSystemService
 import com.example.callcenter.databinding.ActivityCallIncomingBinding
 
 
-fun Activity.cancelNotification(id: Int = 123) {
+fun Activity.cancelNotification(id: Int = Incoming_Call_Notification_Id) {
     this.getSystemService<NotificationManager>()?.cancel(id)
 }
 

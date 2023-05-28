@@ -5,17 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.dashboard.DashboardFragment">
+    tools:context=".ContactActivity">
 
-    <include
-        android:id="@+id/keypad"
-        layout="@layout/keypad"
+    <EditText
+        android:id="@+id/nameV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/call"
+    <EditText
+        android:id="@+id/numberV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/submitV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Call" />
+        android:clickable="true"
+        app:srcCompat="@android:drawable/ic_input_add" />
 </LinearLayout>

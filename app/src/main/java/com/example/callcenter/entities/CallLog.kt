@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import java.util.Date
 
-@Entity(tableName = "CallLogs")
+@Entity(tableName = "CallLog")
 data class CallLog(
     @PrimaryKey
     val id: Int,
@@ -20,13 +20,13 @@ data class CallLog(
 
 @Dao
 interface CallLogDao {
-    @Query("select * from CallLogs")
-    fun getAll(): List<CallLog>
+    @Query("select * from CallLog")
+    suspend fun getAll(): List<CallLog>
 
     @Upsert
-    fun addOrUpdate(vararg log: CallLog)
+    suspend fun addOrUpdate(vararg log: CallLog)
 
     @Delete
-    fun delete(log: CallLog)
+    suspend fun delete(log: CallLog)
 }
 

@@ -11,6 +11,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
+const val Incoming_Call_Notification_Id: Int = 123
+const val Outgoing_Call_Notification_Id: Int = 321
+
 class CallService : InCallService() {
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
@@ -24,7 +27,7 @@ class CallService : InCallService() {
     private fun outgoing(call: Call) {
         // Create an intent which triggers your fullscreen incoming call user interface.
         val intent = Intent(Intent.ACTION_MAIN, null)
-        intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = call.details.handle
         intent.setClass(applicationContext, CallScreenActivity::class.java)
 
@@ -55,7 +58,7 @@ class CallService : InCallService() {
         val notificationManager = applicationContext.getSystemService(
             NotificationManager::class.java
         )
-        notificationManager.notify(123, builder.build())
+        notificationManager.notify(Outgoing_Call_Notification_Id, builder.build())
         val nin = Intent(Intent.ACTION_MAIN, null)
         nin.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         nin.data = call.details.handle
@@ -91,7 +94,7 @@ class CallService : InCallService() {
         // manager deems it appropriate
 
         // Setup notification content.
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+        builder.setSmallIcon(R.drawable.incoming_call)
         builder.setContentTitle(call.details.handle.schemeSpecificPart)
         builder.setContentText("incoming")
 
@@ -99,11 +102,16 @@ class CallService : InCallService() {
         val notificationManager = applicationContext.getSystemService(
             NotificationManager::class.java
         )
-        notificationManager.notify(123, builder.build())
+        notificationManager.notify(Incoming_Call_Notification_Id, builder.build())
     }
 
     override fun onCallRemoved(call: Call?) {
-        applicationContext.getSystemService<NotificationManager>()?.cancel(123)
+        applicationContext.getSystemService<NotificationManager>()?.cancel(
+            Incoming_Call_Notification_Id
+        )
+        applicationContext.getSystemService<NotificationManager>()?.cancel(
+            Outgoing_Call_Notification_Id
+        )
         OngoingCall.call = null
     }
 
