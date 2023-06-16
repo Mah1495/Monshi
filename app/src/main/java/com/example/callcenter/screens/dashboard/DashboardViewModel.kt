@@ -1,4 +1,4 @@
-package com.example.callcenter.ui.dashboard
+package com.example.callcenter.screens.dashboard
 
 import android.annotation.SuppressLint
 import android.app.Application

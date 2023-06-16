@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".utils.CallApp"
@@ -43,7 +45,7 @@
             android:label="@string/title_activity_keypad"
             android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
-            android:name=".CallIncomingActivity"
+            android:name=".screens.incoming_call.CallIncomingActivity"
             android:label="@string/title_activity_call_screen"
             android:launchMode="singleInstance"
             android:showOnLockScreen="true"
@@ -65,11 +67,8 @@
                 <data android:scheme="tel" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"></activity>
-        <activity android:name=".CallScreenActivity" />
+        <activity android:name=".screens.call_screen.CallScreenActivity" />
+        <activity android:name="com.example.callcenter.screens.contact.AddOrEditPersonActivity" />
 
         <service
             android:name=".CallService"
