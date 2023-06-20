@@ -39,12 +39,10 @@ class AddEditPersonViewModel @Inject constructor(
             is PersonEvent.Add -> {
                 viewModelScope.launch {
                     db.contactDao()
-                        .addOrUpdate(
+                        .addOrEdit(
                             Contact(
                                 0,
                                 name,
-                                emptyList(),
-                                emptyList(),
                                 number,
                                 image.toString()
                             )

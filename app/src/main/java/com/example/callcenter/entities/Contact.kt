@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.Flow
 data class Contact(
     @PrimaryKey(autoGenerate = true) val id: Int,
     override val name: String,
-    val notes: List<String>,
-    val numbers: List<String>,
     override val number: String,
     override val imageUri: String?
 ) : IGroupable, IImage {
@@ -35,7 +33,7 @@ interface ContactDao {
     fun getAll(): Flow<List<Contact>>
 
     @Upsert
-    suspend fun addOrUpdate(contact: Contact)
+    suspend fun addOrEdit(contact: Contact)
 
     @Delete
     suspend fun delete(contact: Contact)

@@ -8,8 +8,6 @@ import com.example.callcenter.screens.recent_call.CallsEvent
 import com.example.callcenter.utils.call
 import com.example.callcenter.utils.sms
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.asFlow
-import java.util.concurrent.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +18,7 @@ class PeopleViewModel @Inject constructor(
 
     val contacts = db.contactDao().getAll()
     suspend fun add(contact: Contact) {
-        db.contactDao().addOrUpdate(contact)
+        db.contactDao().addOrEdit(contact)
     }
 
     fun onEvent(event: CallsEvent) {

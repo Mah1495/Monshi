@@ -85,6 +85,7 @@
                 <action android:name="android.telecom.InCallService" />
             </intent-filter>
         </service>
+        <receiver android:name="com.example.callcenter.CallNotificationReceiver" />
     </application>
 
 </manifest>

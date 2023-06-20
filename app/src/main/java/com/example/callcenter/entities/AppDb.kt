@@ -8,8 +8,8 @@ import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
 
 @Database(
-    entities = [CallLog::class, Contact::class],
-    version = 1,
+    entities = [CallLog::class, Contact::class, Note::class, PhoneNumber::class],
+    version = 2,
     exportSchema = true
 //    autoMigrations = [AutoMigration(1, 2, AppDb.MyAutoMigration::class)]
 )
@@ -20,4 +20,6 @@ abstract class AppDb : RoomDatabase() {
 
     abstract fun logDao(): CallLogDao
     abstract fun contactDao(): ContactDao
+    abstract fun noteDao(): NoteDao
+    abstract fun phoneNumberDao(): PhoneNumberDao
 }
