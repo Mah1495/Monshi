@@ -7,13 +7,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
-import android.telecom.Call
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import com.example.callcenter.CallInfo
 import com.example.callcenter.CallNotificationReceiver
 import com.example.callcenter.IncomingChannel
 import com.example.callcenter.OutGoingChannel
@@ -63,11 +62,10 @@ class AppNotificationManager(val app: Application) {
     }
 
 
-    fun activeCall(call: Call) {
+    fun activeCall(call: CallInfo) {
         // Create an intent which triggers your fullscreen incoming call user interface.
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.data = call.details.handle
         intent.setClass(app, CallScreenActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(app, 123, intent, PendingIntent.FLAG_MUTABLE)
@@ -88,7 +86,7 @@ class AppNotificationManager(val app: Application) {
 
         // Setup notification content.
         builder.setSmallIcon(R.drawable.ic_called)
-        builder.setContentTitle("Call: " + call.details.handle.schemeSpecificPart)
+        builder.setContentTitle("Call: " + call.displayName())
 
         // Use builder.addAction(..) to add buttons to answer or reject the call.
         val notificationManager = app.getSystemService(
@@ -97,11 +95,10 @@ class AppNotificationManager(val app: Application) {
         notificationManager.notify(Active_Call_Notification_Id, builder.build())
     }
 
-    fun outgoingCall(call: Call) {
+    fun outgoingCall(call: CallInfo) {
         // Create an intent which triggers your fullscreen incoming call user interface.
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.data = call.details.handle
         intent.setClass(app, CallScreenActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(app, 123, intent, PendingIntent.FLAG_MUTABLE)
@@ -122,7 +119,7 @@ class AppNotificationManager(val app: Application) {
 
         // Setup notification content.
         builder.setSmallIcon(R.drawable.ic_calling)
-        builder.setContentTitle("Calling: " + call.details.handle.schemeSpecificPart)
+        builder.setContentTitle("Calling: " + call.displayName())
 
         // Use builder.addAction(..) to add buttons to answer or reject the call.
         val notificationManager = app.getSystemService(
@@ -131,11 +128,10 @@ class AppNotificationManager(val app: Application) {
         notificationManager.notify(Outgoing_Call_Notification_Id, builder.build())
     }
 
-    fun incoming(call: Call, name: String, note: String?) {
+    fun incoming(call: CallInfo) {
         // Create an intent which triggers your fullscreen incoming call user interface.
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-        intent.data = call.details.handle
 
         intent.setClass(app, CallIncomingActivity::class.java)
 
@@ -154,28 +150,27 @@ class AppNotificationManager(val app: Application) {
 
         // Setup notification content.
         builder.setSmallIcon(R.drawable.incoming_call)
-        val answer =
-            PendingIntent.getBroadcast(
-                app,
-                1,
-                Intent(app, CallNotificationReceiver::class.java).setAction(Incoming_Answer_Action),
-                PendingIntent.FLAG_MUTABLE
-            )
-        val reject =
-            PendingIntent.getBroadcast(
-                app, 2,
-                Intent(app, CallNotificationReceiver::class.java).setAction(Incoming_Reject_Action),
-                PendingIntent.FLAG_MUTABLE
-            )
+        val answer = PendingIntent.getBroadcast(
+            app,
+            1,
+            Intent(app, CallNotificationReceiver::class.java).setAction(Incoming_Answer_Action),
+            PendingIntent.FLAG_MUTABLE
+        )
+        val reject = PendingIntent.getBroadcast(
+            app,
+            2,
+            Intent(app, CallNotificationReceiver::class.java).setAction(Incoming_Reject_Action),
+            PendingIntent.FLAG_MUTABLE
+        )
         val contentView = RemoteViews(app.packageName, R.layout.incoming_notification)
         contentView.setOnClickPendingIntent(R.id.answer, answer)
         contentView.setOnClickPendingIntent(R.id.reject, reject)
-        contentView.setTextViewText(R.id.notification_title, name)
+        contentView.setTextViewText(R.id.notification_title, call.displayName())
         val contentViewEx = RemoteViews(app.packageName, R.layout.incoming_notification_expand)
         contentViewEx.setOnClickPendingIntent(R.id.answer, answer)
         contentViewEx.setOnClickPendingIntent(R.id.reject, reject)
-        contentViewEx.setTextViewText(R.id.notification_title, name)
-        contentViewEx.setTextViewText(R.id.notification_content, note)
+        contentViewEx.setTextViewText(R.id.notification_title, call.displayName())
+        contentViewEx.setTextViewText(R.id.notification_content, call.note)
         builder.setCustomContentView(contentView)
         builder.setCustomBigContentView(contentViewEx)
         val notificationManager = app.getSystemService(

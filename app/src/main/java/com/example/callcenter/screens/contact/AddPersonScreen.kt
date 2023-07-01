@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -34,24 +36,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.callcenter.screens.call_screen.UiEvent
 import coil.compose.rememberAsyncImagePainter
 
-@Composable
-fun ImagePicker(onImageSelected: (Uri) -> Unit) {
-    val context = LocalContext.current
-    val activityResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-    ) { uri: Uri? ->
-        uri?.let { onImageSelected(it) }
-    }
-
-    IconButton(
-        onClick = { activityResultLauncher.launch("image/*") },
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(CircleShape)
-    ) {
-        Icon(Icons.Default.PhotoCamera, "Select Image")
-    }
-}
 
 @Composable
 fun AddEditPersonScreen(done: () -> Unit, model: AddEditPersonViewModel = hiltViewModel()) {
@@ -65,31 +49,24 @@ fun AddEditPersonScreen(done: () -> Unit, model: AddEditPersonViewModel = hiltVi
     }
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
+            contentAlignment = Alignment.Center, modifier = Modifier
                 .height(100.dp)
                 .fillMaxWidth()
         ) {
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = model.image
-                ),
-                contentDescription = "",
+            Box(
                 Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
             )
-            ImagePicker(onImageSelected = { model.onEvent(PersonEvent.ImageSelected(it)) })
         }
         TextField(
             value = model.name,
             onValueChange = {
                 model.onEvent(
                     PersonEvent.OnPropertyChanged(
-                        AddEditPersonProperty.Name,
-                        it
+                        AddEditPersonProperty.Name, it
                     )
                 )
             },
@@ -103,8 +80,7 @@ fun AddEditPersonScreen(done: () -> Unit, model: AddEditPersonViewModel = hiltVi
             onValueChange = {
                 model.onEvent(
                     PersonEvent.OnPropertyChanged(
-                        AddEditPersonProperty.Number,
-                        it
+                        AddEditPersonProperty.Number, it
                     )
                 )
             },
@@ -113,15 +89,26 @@ fun AddEditPersonScreen(done: () -> Unit, model: AddEditPersonViewModel = hiltVi
                 .padding(10.dp)
                 .fillMaxWidth()
         )
+        TextField(
+            value = model.note,
+            onValueChange = {
+                model.onEvent(PersonEvent.OnPropertyChanged(AddEditPersonProperty.Note, it))
+            },
+            placeholder = { Text(text = "Note") },
+            modifier = Modifier
+                .height(128.dp)
+                .padding(10.dp)
+                .fillMaxWidth()
+        )
         Box(modifier = Modifier.weight(1f))
         Button(
-            onClick = { model.onEvent(PersonEvent.Add) }, modifier = Modifier
+            onClick = { model.onEvent(PersonEvent.Add) },
+            modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth()
         ) {
             Text(
-                text = "Add",
-                modifier = Modifier.padding(10.dp)
+                text = "Add", modifier = Modifier.padding(10.dp)
             )
         }
     }

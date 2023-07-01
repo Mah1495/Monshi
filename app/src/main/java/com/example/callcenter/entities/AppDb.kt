@@ -9,7 +9,7 @@ import androidx.room.migration.AutoMigrationSpec
 
 @Database(
     entities = [CallLog::class, Contact::class, Note::class, PhoneNumber::class],
-    version = 2,
+    version = 1,
     exportSchema = true
 //    autoMigrations = [AutoMigration(1, 2, AppDb.MyAutoMigration::class)]
 )

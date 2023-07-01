@@ -23,17 +23,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
-fun IncomingCallScreen(name: String?, accept: () -> Unit, reject: () -> Unit) {
+fun IncomingCallScreen(
+    model: IncomingCallViewModel = hiltViewModel(),
+    accept: () -> Unit,
+    reject: () -> Unit
+) {
     Column(Modifier.fillMaxSize()) {
-        Row(
+        Column(
             Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Top
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(text = name ?: "unknown")
+            model.callHandler.callInfo?.let {
+                Text(text = it.displayName())
+                Text(text = it.number ?: "")
+                Text(text = it.note ?: "")
+            }
         }
         Row(Modifier.weight(1f)) {
             Box() {}

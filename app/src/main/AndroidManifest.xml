@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
     <application
         android:name=".utils.CallApp"
@@ -23,34 +25,38 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CallCenter"
+        android:theme="@style/Theme.AppCompat"
         tools:targetApi="31">
-        <activity
-            android:name=".ContactActivity"
-            android:exported="false" />
+
         <activity
             android:name=".AppActivity"
             android:exported="true"
-            android:label="@string/title_activity_app"
-            android:theme="@style/Theme.CallCenter">
+            android:label="@string/title_activity_app">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="tel" />
+            </intent-filter>
         </activity>
-        <activity
-            android:name=".KeypadActivity"
-            android:exported="false"
-            android:label="@string/title_activity_keypad"
-            android:theme="@style/Theme.AppCompat.Dialog" />
+
         <activity
             android:name=".screens.incoming_call.CallIncomingActivity"
             android:label="@string/title_activity_call_screen"
             android:launchMode="singleInstance"
-            android:showOnLockScreen="true"
-            android:theme="@style/Theme.CallCenter" />
-        <activity
+            android:showOnLockScreen="true" />
+        <!--<activity
             android:name=".DialerActivity"
             android:exported="true"
             android:label="dialer">
@@ -66,9 +72,12 @@
 
                 <data android:scheme="tel" />
             </intent-filter>
-        </activity>
+        </activity>-->
         <activity android:name=".screens.call_screen.CallScreenActivity" />
-        <activity android:name="com.example.callcenter.screens.contact.AddOrEditPersonActivity" />
+        <activity
+            android:name="com.example.callcenter.screens.contact.AddOrEditPersonActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name="com.example.callcenter.screens.info.InformationActivity" />
 
         <service
             android:name=".CallService"

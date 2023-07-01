@@ -37,7 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun CallScreen(
-    openSheet: () -> Unit={},
+    openSheet: () -> Unit = {},
     model: CallScreenViewModel = hiltViewModel(),
     keypadState: MutableState<Boolean>? = null
 ) {
@@ -53,49 +53,63 @@ fun CallScreen(
             }
         }
     }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxSize()
-            .padding(5.dp),
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
+    Column {
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            CallButton(
-                label = "Mute",
-                icon = Icons.Default.MicOff, model.muted.value,
-                { model.onEvent(CallEvent.Mute) })
-            CallButton(
-                label = "Keypad",
-                icon = Icons.Default.Dialpad, model.keypad.value,
-                { model.onEvent(CallEvent.Keypad) })
-            CallButton(
-                label = "Speaker",
-                icon = Icons.Default.VolumeUp, model.speaker.value,
-                { model.onEvent(CallEvent.Speaker) })
+            Text(text = model.callHandler.callInfo!!.displayName())
+            Text(text = model.callHandler.callInfo!!.number!!)
+            model.callHandler.callInfo?.note?.let {
+                Text(text = model.callHandler.callInfo?.note ?: "")
+            }
         }
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-        ) {
-            CallButton(label = "Add Call", icon = Icons.Default.Add, false, {})
-            CallButton(label = "Video Call", icon = Icons.Default.VideoCall, false, {})
-            CallButton(label = "Hold", icon = Icons.Default.Pause, false, {})
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        IconButton(
-            onClick = { model.onEvent(CallEvent.Disconnect) },
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .clip(CircleShape)
-                .background(Color.Red)
+                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(5.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Icon(Icons.Default.CallEnd, "End")
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                CallButton(
+                    label = "Mute",
+                    icon = Icons.Default.MicOff, model.muted.value,
+                    { model.onEvent(CallEvent.Mute) })
+                CallButton(
+                    label = "Keypad",
+                    icon = Icons.Default.Dialpad, model.keypad.value,
+                    { model.onEvent(CallEvent.Keypad) })
+                CallButton(
+                    label = "Speaker",
+                    icon = Icons.Default.VolumeUp, model.speaker.value,
+                    { model.onEvent(CallEvent.Speaker) })
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                CallButton(label = "Add Call", icon = Icons.Default.Add, false, {})
+                CallButton(label = "Video Call", icon = Icons.Default.VideoCall, false, {})
+                CallButton(label = "Hold", icon = Icons.Default.Pause, false, {})
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            IconButton(
+                onClick = { model.onEvent(CallEvent.Disconnect) },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color.Red)
+            ) {
+                Icon(Icons.Default.CallEnd, "End")
+            }
         }
     }
 }

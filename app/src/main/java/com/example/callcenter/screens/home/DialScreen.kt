@@ -2,6 +2,7 @@ package com.example.callcenter.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -15,38 +16,42 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.callcenter.screens.call_screen.UiEvent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialScreen(
     standAlone: Boolean = false,
@@ -54,7 +59,6 @@ fun DialScreen(
     modifier: Modifier,
     closeSheet: () -> Unit = {}
 ) {
-    var phoneNumber by remember { model.phoneNumber }
     LaunchedEffect(key1 = true) {
         model.uiEvent.collect {
             when (it) {
@@ -66,49 +70,82 @@ fun DialScreen(
             }
         }
     }
-    model.sheet.value = standAlone
-    Column(modifier = modifier, verticalArrangement = Arrangement.Bottom) {
-        CompositionLocalProvider(
-            LocalTextInputService provides null
-        ) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                TextField(
-                    value = phoneNumber,
-                    onValueChange = { phoneNumber = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 5.dp),
-                    textStyle = TextStyle.Default.copy(fontSize = 25.sp), enabled = !standAlone
-                )
+    model.sheet = standAlone
+    Surface() {
+
+
+        Column {
+            Column(modifier = modifier, verticalArrangement = Arrangement.Bottom) {
+                CompositionLocalProvider(
+                    LocalTextInputService provides null
+                ) {
+                    LazyColumn(
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        items(model.list) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(androidx.compose.material3.MaterialTheme.colorScheme.surface)
+                                    .padding(10.dp)
+                                    .clickable { model.onEvent(DialEvent.CallSearchClicked(it)) },
+                            ) {
+                                it.name?.let {
+                                    Text(
+                                        text = it,
+                                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                                Text(
+                                    text = it.number!!,
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        TextField(
+                            value = model.phoneNumber,
+                            onValueChange = { model.onEvent(DialEvent.TextChanged(it)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 5.dp),
+                            enabled = !standAlone,
+                        )
+                        if (!standAlone) {
+                            IconButtonLong(onClick = {
+                                model.onEvent(DialEvent.Removed)
+                            }, onLongClick = {
+                                model.onEvent(DialEvent.Cleared)
+                            }) {
+                                Icon(Icons.Outlined.Backspace, "clear")
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                GridNumbers(onEvent = model::onEvent)
+                Spacer(modifier = Modifier.height(5.dp))
                 if (!standAlone) {
-                    IconButtonLong(onClick = {
-                        model.onEvent(DialEvent.Removed)
-                    }, onLongClick = {
-                        model.onEvent(DialEvent.Cleared)
-                    }) {
-                        Icon(Icons.Outlined.Backspace, "clear")
+                    DialButton(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                    ) {
+                        model.onEvent(DialEvent.Called)
                     }
                 }
             }
         }
-        Spacer(modifier = Modifier.height(5.dp))
-        GridNumbers(onEvent = model::onEvent)
-        Spacer(modifier = Modifier.height(5.dp))
-        if (!standAlone) {
-            DialButton(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-            ) {
-                model.onEvent(DialEvent.Called)
-            }
-        }
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -185,12 +222,12 @@ fun NumberButton(number: String, onEvent: (DialEvent) -> Unit) {
             .clip(CircleShape)
             .background(Color.White),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.White, contentColor = Color.Transparent
+            containerColor = Color.White, contentColor = Color.Transparent
         )
     ) {
         Text(
             text = number,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.labelLarge,
             color = Color.Black,
             fontSize = 30.sp
         )
@@ -207,7 +244,7 @@ fun DialButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
             .size(78.dp)
             .clip(CircleShape),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.primary
+            containerColor = MaterialTheme.colorScheme.primary
         ),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {

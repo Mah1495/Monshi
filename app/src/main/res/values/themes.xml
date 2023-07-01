@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.CallCenter" parent="Theme.AppCompat.Light.NoActionBar" />
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CallCenter" parent="Theme.Material3.Light">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+<!--    <style name="Theme.CallCenter" parent="Theme.AppCompat.Light.NoActionBar" />-->
+<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
+<!--    <style name="Base.Theme.CallCenter" parent="Theme.Material3.Light">-->
+<!--        &lt;!&ndash; Customize your light theme here. &ndash;&gt;-->
+<!--        &lt;!&ndash; <item name="colorPrimary">@color/my_light_primary</item> &ndash;&gt;-->
+<!--    </style>-->
 </resources>

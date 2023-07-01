@@ -25,11 +25,11 @@ class CallIncomingActivity : AppCompatActivity() {
         setTurnScreenOn(true)
         setShowWhenLocked(true)
         setContent {
-            IncomingCallScreen(intent.data?.schemeSpecificPart, {
+            IncomingCallScreen(accept = {
                 callHandler.answer()
                 val myIntent = Intent(this, CallScreenActivity::class.java)
                 startActivity(myIntent)
-            }, {
+            }, reject = {
                 callHandler.call?.reject(Call.REJECT_REASON_DECLINED)
             })
         }

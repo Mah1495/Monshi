@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import com.example.callcenter.entities.AppDb
 import com.example.callcenter.entities.Contact
+import com.example.callcenter.screens.info.showInfo
 import com.example.callcenter.screens.recent_call.CallsEvent
 import com.example.callcenter.utils.call
 import com.example.callcenter.utils.sms
@@ -32,7 +33,7 @@ class PeopleViewModel @Inject constructor(
             }
 
             is CallsEvent.Info -> {
-
+                app.showInfo(event.number)
             }
 
             is CallsEvent.Notes -> {

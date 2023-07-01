@@ -65,7 +65,11 @@ fun Iv() {
 }
 
 @Composable
-fun GroupedList(items: List<IGroupable>, onEvent: (CallsEvent) -> Unit) {
+fun GroupedList(
+    items: List<IGroupable>,
+    expandable: Boolean = true,
+    onEvent: (CallsEvent) -> Unit
+) {
     val expandIndex = remember { mutableStateOf<Int?>(null) }
     LazyColumn {
         itemsIndexed(items) { index, item ->
@@ -133,12 +137,12 @@ fun GroupedList(items: List<IGroupable>, onEvent: (CallsEvent) -> Unit) {
                             text = item.date.getTime()
                         )
                     }
-                    if (index == expandIndex.value) {
+                    if (expandable && index == expandIndex.value) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.height(150.dp)
                         ) {
-                            RecentCallAction(item, onEvent)
+                            RecentCallAction(item.number, FourButtons, onEvent)
                         }
                     }
                 }
@@ -154,14 +158,18 @@ fun GroupedList(items: List<IGroupable>, onEvent: (CallsEvent) -> Unit) {
     }
 }
 
-private val buttons = listOf(
+val FourButtons = listOf(
     CallButton(Icons.Default.Call, "") { CallsEvent.Call(it) },
     CallButton(Icons.Default.Message, "") { CallsEvent.Message(it) },
     CallButton(Icons.Default.Info, "") { CallsEvent.Info(it) },
     CallButton(Icons.Default.Note, "") { CallsEvent.Notes(it) }
 )
+val TwoButtons = listOf(
+    CallButton(Icons.Default.Call, "") { CallsEvent.Call(it) },
+    CallButton(Icons.Default.Message, "") { CallsEvent.Message(it) }
+)
 
-private data class CallButton(
+data class CallButton(
     val icon: ImageVector,
     val name: String,
     val eventType: (String) -> CallsEvent
@@ -169,12 +177,12 @@ private data class CallButton(
 
 
 @Composable
-fun RecentCallAction(item: IGroupable, onEvent: (CallsEvent) -> Unit) {
+fun RecentCallAction(number: String, buttons: List<CallButton>, onEvent: (CallsEvent) -> Unit) {
     Row(Modifier.fillMaxWidth()) {
         buttons.forEach {
             Column(modifier = Modifier.weight(1f), horizontalAlignment = CenterHorizontally) {
                 IconButton(
-                    onClick = { onEvent(it.eventType(item.number)) },
+                    onClick = { onEvent(it.eventType(number)) },
                     modifier = Modifier
                         .padding(10.dp)
                         .clip(CircleShape)
@@ -194,4 +202,5 @@ fun RecentScreen(model: RecentCallViewModel = hiltViewModel()) {
         GroupedList(items = items) { model.onEvent(it) }
     }
 }
+
 

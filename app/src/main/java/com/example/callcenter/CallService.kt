@@ -20,23 +20,9 @@ class CallService : InCallService() {
     @Inject
     lateinit var model: CallHandler
 
-    @Inject
-    lateinit var notificationManager: AppNotificationManager
-
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
         model.call = call
-        model.state.subscribe {
-            if (it != Call.STATE_RINGING) {
-                this.applicationContext.cancelNotification()
-            }
-            if (it == Call.STATE_ACTIVE && model.incoming) {
-                this.notificationManager.activeCall(call)
-            }
-            if (it == Call.STATE_DISCONNECTED) {
-                this.cancelNotification(Active_Call_Notification_Id)
-            }
-        }
     }
 
     override fun onCallRemoved(call: Call?) {

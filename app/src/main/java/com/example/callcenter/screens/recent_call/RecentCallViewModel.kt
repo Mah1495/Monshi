@@ -1,7 +1,9 @@
 package com.example.callcenter.screens.recent_call
 
 import android.app.Application
+import android.content.Intent
 import android.provider.CallLog
+import android.provider.ContactsContract
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CallEnd
@@ -12,9 +14,17 @@ import androidx.compose.material.icons.filled.PhoneMissed
 import androidx.compose.material.icons.filled.Voicemail
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.callcenter.entities.ContactRepository
+import com.example.callcenter.screens.call_screen.UiEvent
+import com.example.callcenter.screens.info.InformationActivity
+import com.example.callcenter.screens.info.showInfo
 import com.example.callcenter.utils.call
 import com.example.callcenter.utils.sms
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.util.Date
 import javax.inject.Inject
@@ -35,7 +45,7 @@ enum class CallType(val type: Int, val icon: ImageVector) {
 
 @HiltViewModel
 class RecentCallViewModel @Inject constructor(
-    val app: Application
+    val app: Application, val repo: ContactRepository
 ) : ViewModel() {
     private val projection = arrayOf(
         CallLog.Calls._ID,
@@ -47,24 +57,28 @@ class RecentCallViewModel @Inject constructor(
         CallLog.Calls.CACHED_NAME
     )
 
+    private val _uiEvents = Channel<UiEvent>()
+    val uiEvents = _uiEvents.receiveAsFlow()
+
     fun logs(): List<RecentCall> {
-        val cursor = app.contentResolver.query(
-            CallLog.Calls.CONTENT_URI.buildUpon()
-                .build(),
-            projection, null, null, "date DESC"
-        )
-        val list: MutableList<RecentCall> = mutableListOf()
-        while (cursor != null && cursor.moveToNext()) {
-            val recentCall = RecentCall(
-                cursor.getString(6) ?: cursor.getString(1) ?: "noname",
-                Date(cursor.getLong(3)).toInstant().atZone(ZoneId.systemDefault())
-                    .toLocalDateTime(),
-                CallType.fromInt(cursor.getInt(2)).icon,
-                cursor.getString(1) ?: "noname"
-            )
-            list.add(recentCall)
-        }
-        return list
+        return repo.logs()
+//        val cursor = app.contentResolver.query(
+//            CallLog.Calls.CONTENT_URI.buildUpon()
+//                .build(),
+//            projection, null, null, "date DESC"
+//        )
+//        val list: MutableList<RecentCall> = mutableListOf()
+//        while (cursor != null && cursor.moveToNext()) {
+//            val recentCall = RecentCall(
+//                cursor.getString(6) ?: cursor.getString(1) ?: "noname",
+//                Date(cursor.getLong(3)).toInstant().atZone(ZoneId.systemDefault())
+//                    .toLocalDateTime(),
+//                CallType.fromInt(cursor.getInt(2)).icon,
+//                cursor.getString(1) ?: "noname"
+//            )
+//            list.add(recentCall)
+//        }
+//        return list
     }
 
     fun onEvent(event: CallsEvent) {
@@ -78,7 +92,7 @@ class RecentCallViewModel @Inject constructor(
             }
 
             is CallsEvent.Info -> {
-
+                app.showInfo(event.number)
             }
 
             is CallsEvent.Notes -> {

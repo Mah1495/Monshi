@@ -7,11 +7,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.telecom.TelecomManager
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
+import io.michaelrocks.libphonenumber.android.Phonenumber.PhoneNumber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
+const val Default_Country = "IR"
+fun PhoneNumberUtil.parse(number: String): PhoneNumber {
+    return this.parse(number, Default_Country)
+}
 
 fun CharSequence.removeLast(): CharSequence {
     if (!this.isNullOrEmpty()) {

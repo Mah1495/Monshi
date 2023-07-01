@@ -3,6 +3,7 @@ package com.example.callcenter.entities
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Upsert
@@ -15,8 +16,8 @@ data class Contact(
     @PrimaryKey(autoGenerate = true) val id: Int,
     override val name: String,
     override val number: String,
-    override val imageUri: String?
-) : IGroupable, IImage {
+    val imageUri: String?
+) : IGroupable {
     override fun compare(item: IGroupable): Boolean {
         return name[0].uppercase() == item.name[0].uppercase()
     }
@@ -32,8 +33,17 @@ interface ContactDao {
     @Query("select * from contact")
     fun getAll(): Flow<List<Contact>>
 
+    @Query(
+        """select c.id,c.name,p.normalized as number from PhoneNumber p
+    join contact c on p.contactId=c.id """
+    )
+    suspend fun all(): List<Contact>
+
+    @Query("select * from Contact where id=:id")
+    suspend fun get(id: Int): Contact
+
     @Upsert
-    suspend fun addOrEdit(contact: Contact)
+    suspend fun addOrEdit(contact: Contact): Long
 
     @Delete
     suspend fun delete(contact: Contact)

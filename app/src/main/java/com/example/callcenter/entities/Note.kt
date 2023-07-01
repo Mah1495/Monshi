@@ -9,17 +9,25 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Entity
-data class Note(@PrimaryKey(autoGenerate = true) val id: Int, val number: String, val note: String)
+data class Note(
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val number: String?,
+    val note: String,
+    val contactId: Int? = null
+)
 
 @Dao
 interface NoteDao {
-    @Query("select * from note where number=:number")
-    fun getAll(number: String): Flow<List<Note>>
+    @Query("select * from note where number=:number limit :limit")
+    fun getAll(number: String, limit: Int): Flow<List<Note>>
+
+    @Query("select * from note where contactId=:contactId Limit :limit")
+    suspend fun getAll(contactId: Int, limit: Int): List<Note>
 
     @Upsert
-    fun addOrEdit(note: Note)
+    suspend fun addOrEdit(note: Note)
 
     @Delete
-    fun delete(note: Note)
+    suspend fun delete(note: Note)
 }
 

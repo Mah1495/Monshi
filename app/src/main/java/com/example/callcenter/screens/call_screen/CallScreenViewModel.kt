@@ -79,4 +79,5 @@ sealed class UiEvent {
     object CloseSheet : UiEvent()
     object OpenSheet : UiEvent()
     object Done : UiEvent()
+    data class StartActivity(val id: Int) : UiEvent()
 }
