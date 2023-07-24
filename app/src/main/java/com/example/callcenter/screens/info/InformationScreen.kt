@@ -2,7 +2,6 @@
 
 package com.example.callcenter.screens.info
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,9 +15,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CallMissed
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,10 +36,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.callcenter.screens.recent_call.GroupedList
-import com.example.callcenter.screens.recent_call.RecentCall
 import com.example.callcenter.screens.recent_call.RecentCallAction
 import com.example.callcenter.screens.recent_call.TwoButtons
-import java.time.LocalDateTime
 
 private sealed class InformationRoute(val route: String, val icon: ImageVector) {
     object Notes : InformationRoute("Notes", Icons.Default.Notes)
@@ -60,7 +55,7 @@ fun informationScreen(number: String, model: InformationViewModel = hiltViewMode
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(MaterialTheme.colorScheme.outlineVariant)
                 .padding(10.dp)
         ) {
             Box(
@@ -71,7 +66,7 @@ fun informationScreen(number: String, model: InformationViewModel = hiltViewMode
                     .background(MaterialTheme.colorScheme.tertiary)
             )
             Text(text = model.number)
-            RecentCallAction(model.number, TwoButtons, onEvent = {})
+            RecentCallAction(model.number, TwoButtons, onEvent = model::onEvent)
         }
         Column(modifier = Modifier.weight(1f)) {
             Scaffold(bottomBar = { bottom(controller = controller) }) {
@@ -96,8 +91,8 @@ fun informationScreen(number: String, model: InformationViewModel = hiltViewMode
 @Composable
 fun bottom(controller: NavController) {
     BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface
+        backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
 
         navs.forEach {

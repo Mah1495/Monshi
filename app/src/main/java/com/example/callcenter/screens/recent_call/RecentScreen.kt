@@ -15,10 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Info
@@ -54,7 +54,7 @@ fun Iv() {
         modifier = Modifier
             .height(100.dp)
             .width(100.dp)
-            .background(androidx.compose.material3.MaterialTheme.colorScheme.primary),
+            .background(MaterialTheme.colorScheme.primary),
         painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(Uri.parse("content://com.android.providers.media.documents/document/image%3A1000000034"))
@@ -87,7 +87,7 @@ fun GroupedList(
                 Text(
                     text = item.groupName(),
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleLarge,
                 )
             }
             Column(
@@ -96,7 +96,7 @@ fun GroupedList(
             ) {
                 Column(
                     modifier = mod
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
                         .padding(10.dp)
                 ) {
                     Row(
@@ -122,7 +122,7 @@ fun GroupedList(
                                     .width(50.dp)
                                     .height(50.dp)
                                     .clip(CircleShape)
-                                    .background(androidx.compose.material3.MaterialTheme.colorScheme.primary),
+                                    .background(MaterialTheme.colorScheme.primary),
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -131,7 +131,7 @@ fun GroupedList(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .weight(1f),
-                            style = MaterialTheme.typography.body1
+                            style = MaterialTheme.typography.bodyMedium
                         )
                         if (item is IDate) Text(
                             text = item.date.getTime()
@@ -186,9 +186,13 @@ fun RecentCallAction(number: String, buttons: List<CallButton>, onEvent: (CallsE
                     modifier = Modifier
                         .padding(10.dp)
                         .clip(CircleShape)
-                        .background(Color.Cyan)
+                        .background(MaterialTheme.colorScheme.primary)
                 ) {
-                    Icon(it.icon, contentDescription = it.name)
+                    Icon(
+                        it.icon,
+                        contentDescription = it.name,
+                        tint = MaterialTheme.colorScheme.surface
+                    )
                 }
             }
         }

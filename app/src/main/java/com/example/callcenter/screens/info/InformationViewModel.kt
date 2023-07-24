@@ -9,7 +9,10 @@ import com.example.callcenter.entities.AppDb
 import com.example.callcenter.entities.ContactRepository
 import com.example.callcenter.entities.Note
 import com.example.callcenter.entities.searchLog
+import com.example.callcenter.screens.recent_call.CallsEvent
 import com.example.callcenter.screens.recent_call.RecentCall
+import com.example.callcenter.utils.call
+import com.example.callcenter.utils.sms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +24,14 @@ class InformationViewModel @Inject constructor(
     val db: AppDb,
     private val repo: ContactRepository
 ) : ViewModel() {
+    fun onEvent(event: CallsEvent) {
+        when (event) {
+            is CallsEvent.Call -> app.call(event.number)
+            is CallsEvent.Message -> app.sms(event.number)
+            else -> {}
+        }
+    }
+
     var number by mutableStateOf("")
 }
 

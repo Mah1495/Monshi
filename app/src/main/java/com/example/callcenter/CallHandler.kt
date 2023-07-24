@@ -4,11 +4,16 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.Build
 import android.telecom.Call
 import android.telecom.Call.Details.DIRECTION_INCOMING
+import android.telecom.CallAudioState
+import android.telecom.InCallService
 import android.telecom.VideoProfile
 import android.util.Log
+import androidx.core.content.getSystemService
 import com.example.callcenter.entities.AppDb
 import com.example.callcenter.entities.ContactRepository
 import com.example.callcenter.entities.Note
@@ -84,7 +89,7 @@ class CallHandler @Inject constructor(
 
     var incoming: Boolean = false
         private set
-
+    lateinit var service: InCallService
     var call: Call? = null
         set(value) {
             field?.unregisterCallback(callback)
@@ -92,6 +97,8 @@ class CallHandler @Inject constructor(
                 value.registerCallback(callback)
                 state.onNext(it.state)
                 notify(value)
+                app.getSystemService<AudioManager>()!!
+                    .requestAudioFocus(AudioFocusRequest.Builder(AudioManager.MODE_IN_CALL).build())
             }
             field = value
             if (value == null) {

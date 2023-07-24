@@ -1,6 +1,9 @@
 package com.example.callcenter
 
 import android.app.NotificationManager
+import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
 import android.telecom.Call
 import android.telecom.CallAudioState
 import android.telecom.InCallService
@@ -22,6 +25,8 @@ class CallService : InCallService() {
 
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
+        setAudioRoute(CallAudioState.ROUTE_EARPIECE)
+        model.service = this
         model.call = call
     }
 

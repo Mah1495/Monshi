@@ -51,7 +51,7 @@ fun Application.call(number: String) {
     val tm = this.getSystemService(Activity.TELECOM_SERVICE) as TelecomManager
     val uri = Uri.fromParts("tel", number, null)
     val extras = Bundle()
-    extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
+//    extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
     tm.placeCall(uri, extras)
 }
 

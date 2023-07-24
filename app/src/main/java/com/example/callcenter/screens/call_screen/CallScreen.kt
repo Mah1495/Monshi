@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CallEnd
@@ -23,6 +23,8 @@ import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -119,24 +121,25 @@ fun CallButton(
     label: String, icon: ImageVector, enabled: Boolean,
     onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .padding(20.dp)
-            .background(if (enabled) Color.Green else Color.White)
-            .size(80.dp), contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            onClick = onClick, modifier = Modifier
-                .clip(CircleShape)
-                .fillMaxWidth()
+    Surface(color = if (enabled) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer) {
+        Box(
+            modifier = modifier
+                .padding(20.dp)
+                .size(80.dp), contentAlignment = Alignment.Center
         ) {
-            Icon(
-                icon, label,
-                modifier
-                    .size(48.dp)
-                    .padding(10.dp)
-            )
+            IconButton(
+                onClick = onClick, modifier = Modifier
+                    .clip(CircleShape)
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    icon, label,
+                    modifier
+                        .size(48.dp)
+                        .padding(10.dp)
+                )
+            }
+            Text(text = label, modifier = Modifier.align(Alignment.BottomCenter), fontSize = 10.sp)
         }
-        Text(text = label, modifier = Modifier.align(Alignment.BottomCenter), fontSize = 10.sp)
     }
 }

@@ -7,15 +7,17 @@ import android.telecom.Call
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Surface
 import com.example.callcenter.CallHandler
 import com.example.callcenter.screens.call_screen.CallScreenActivity
+import com.example.callcenter.screens.ui.theme.CallCenterTheme
 import com.example.callcenter.utils.cancelNotification
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class CallIncomingActivity : AppCompatActivity() {
+class IncomingCallActivity : AppCompatActivity() {
     @Inject
     lateinit var callHandler: CallHandler
 
@@ -24,14 +26,19 @@ class CallIncomingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTurnScreenOn(true)
         setShowWhenLocked(true)
+        supportActionBar?.hide()
         setContent {
-            IncomingCallScreen(accept = {
-                callHandler.answer()
-                val myIntent = Intent(this, CallScreenActivity::class.java)
-                startActivity(myIntent)
-            }, reject = {
-                callHandler.call?.reject(Call.REJECT_REASON_DECLINED)
-            })
+            CallCenterTheme {
+                Surface {
+                    IncomingCallScreen(accept = {
+                        callHandler.answer()
+                        val myIntent = Intent(this, CallScreenActivity::class.java)
+                        startActivity(myIntent)
+                    }, reject = {
+                        callHandler.call?.reject(Call.REJECT_REASON_DECLINED)
+                    })
+                }
+            }
         }
 
         callHandler.state.subscribe {

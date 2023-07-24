@@ -7,7 +7,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,20 +18,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.outlined.Backspace
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -44,14 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.callcenter.screens.call_screen.UiEvent
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun DialScreen(
     standAlone: Boolean = false,
@@ -71,106 +65,69 @@ fun DialScreen(
         }
     }
     model.sheet = standAlone
-    Surface() {
-
-
-        Column {
-            Column(modifier = modifier, verticalArrangement = Arrangement.Bottom) {
-                CompositionLocalProvider(
-                    LocalTextInputService provides null
+    Column {
+        Column(modifier = modifier, verticalArrangement = Arrangement.Bottom) {
+            CompositionLocalProvider(
+                LocalTextInputService provides null
+            ) {
+                LazyColumn(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
-                    LazyColumn(
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        items(model.list) {
-                            Row(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .background(androidx.compose.material3.MaterialTheme.colorScheme.surface)
-                                    .padding(10.dp)
-                                    .clickable { model.onEvent(DialEvent.CallSearchClicked(it)) },
-                            ) {
-                                it.name?.let {
-                                    Text(
-                                        text = it,
-                                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                                Text(
-                                    text = it.number!!,
-                                    textAlign = TextAlign.End,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        }
-                    }
-                    Column(
-                        Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        TextField(
-                            value = model.phoneNumber,
-                            onValueChange = { model.onEvent(DialEvent.TextChanged(it)) },
-                            modifier = Modifier
+                    items(model.list) {
+                        Row(
+                            Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            enabled = !standAlone,
-                        )
-                        if (!standAlone) {
-                            IconButtonLong(onClick = {
-                                model.onEvent(DialEvent.Removed)
-                            }, onLongClick = {
-                                model.onEvent(DialEvent.Cleared)
-                            }) {
-                                Icon(Icons.Outlined.Backspace, "clear")
-                            }
+                                .padding(10.dp)
+                                .clickable { model.onEvent(DialEvent.CallSearchClicked(it)) },
+                        ) {
+                            Text(text = it.name)
+                            Text(
+                                text = it.number,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(5.dp))
-                GridNumbers(onEvent = model::onEvent)
-                Spacer(modifier = Modifier.height(5.dp))
-                if (!standAlone) {
-                    DialButton(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                    ) {
-                        model.onEvent(DialEvent.Called)
+                Column(
+                    Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    TextField(
+                        value = model.phoneNumber,
+                        onValueChange = { model.onEvent(DialEvent.TextChanged(it)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp),
+                        enabled = !standAlone,
+                    )
+                    if (!standAlone) {
+                        Icon(
+                            Icons.Outlined.Backspace, "clear",
+                            modifier = Modifier
+                                .combinedClickable(
+                                    onClick = { model.onEvent(DialEvent.Removed) },
+                                    onLongClick = { model.onEvent(DialEvent.Cleared) })
+                                .padding(5.dp)
+                        )
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(5.dp))
+            GridNumbers(onEvent = model::onEvent)
+            Spacer(modifier = Modifier.height(5.dp))
+            if (!standAlone) {
+                DialButton(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                ) {
+                    model.onEvent(DialEvent.Called)
+                }
+            }
         }
-    }
-}
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun IconButtonLong(
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick,
-                enabled = enabled,
-                role = Role.Button,
-                interactionSource = interactionSource,
-                indication = rememberRipple(bounded = false, radius = 0.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        val contentAlpha = if (enabled) LocalContentAlpha.current else ContentAlpha.disabled
-        CompositionLocalProvider(LocalContentAlpha provides contentAlpha, content = content)
     }
 }
 
@@ -252,7 +209,7 @@ fun DialButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
             Icon(
                 imageVector = Icons.Default.Call,
                 contentDescription = null,
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(48.dp)
             )
         }

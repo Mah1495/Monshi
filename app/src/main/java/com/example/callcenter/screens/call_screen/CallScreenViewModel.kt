@@ -1,6 +1,8 @@
 package com.example.callcenter.screens.call_screen
 
 import android.app.Application
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.telecom.CallAudioState
 import android.telecom.InCallService
 import androidx.compose.runtime.mutableStateOf
@@ -24,10 +26,7 @@ class CallScreenViewModel @Inject constructor(
     val uiEvent = _uiEvents.receiveAsFlow()
     val muted = mutableStateOf(false)
     val keypad = mutableStateOf(false)
-    val speaker =
-        mutableStateOf(
-            app.getSystemService<InCallService>()?.callAudioState?.route == CallAudioState.ROUTE_SPEAKER
-        )
+    val speaker = mutableStateOf(false)
 
     fun onEvent(event: CallEvent) {
         when (event) {
@@ -36,14 +35,13 @@ class CallScreenViewModel @Inject constructor(
             }
 
             is Mute -> {
-                app.getSystemService<InCallService>()?.setMuted(muted.value)
                 muted.value = !muted.value
+                callHandler.service.setMuted(muted.value)
             }
 
             is Speaker -> {
-                app.getSystemService<InCallService>()
-                    ?.setAudioRoute(if (speaker.value) CallAudioState.ROUTE_SPEAKER else CallAudioState.ROUTE_EARPIECE)
                 speaker.value = !speaker.value
+                callHandler.service.setAudioRoute(if (speaker.value) CallAudioState.ROUTE_SPEAKER else CallAudioState.ROUTE_EARPIECE)
             }
 
             is Keypad -> {
@@ -61,7 +59,6 @@ class CallScreenViewModel @Inject constructor(
 
         }
     }
-
 }
 
 sealed class CallEvent {

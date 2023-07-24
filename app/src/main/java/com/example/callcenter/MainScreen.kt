@@ -17,9 +17,11 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,15 +45,21 @@ fun MainScreenView(showActivity: (Int) -> Unit) {
     val show = navBackStackEntry.value?.destination?.route == "people"
     Scaffold(bottomBar = { BottomNavigationBar(navController = navController) }, topBar = {
         if (show) {
-            TopAppBar(title = {
-                Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = {
-                        showActivity(0)
-                    }) {
-                        Icon(Icons.Default.Add, contentDescription = "add")
+            TopAppBar(
+                title = {
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        IconButton(onClick = {
+                            showActivity(0)
+                        }) {
+                            Icon(Icons.Default.Add, contentDescription = "add")
+                        }
                     }
-                }
-            })
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            )
         }
     }) {
         Box(modifier = Modifier.padding(it)) {
@@ -66,8 +74,8 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem.Phone, BottomNavItem.Recent, BottomNavItem.People
     )
     BottomNavigation(
-        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-        contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+        backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.value?.destination?.route
@@ -76,19 +84,19 @@ fun BottomNavigationBar(navController: NavController) {
                 Icon(
                     item.icon,
                     contentDescription = item.title,
-                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
                 label = {
                     Text(
                         text = item.title,
                         fontSize = 9.sp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                 },
                 selectedContentColor = Color.Black,
                 unselectedContentColor = Color.Black.copy(0.4f),
-                alwaysShowLabel = true,
+                alwaysShowLabel = false,
                 selected = currentRoute == item.screen_route,
                 onClick = {
                     navController.navigate(item.screen_route) {
@@ -117,9 +125,7 @@ sealed class BottomNavItem(var title: String, var screen_route: String, var icon
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = BottomNavItem.Phone.screen_route) {
         composable(BottomNavItem.Phone.screen_route) {
-
             DialScreen(modifier = Modifier.fillMaxSize())
-
         }
         composable(BottomNavItem.Recent.screen_route) {
             RecentScreen()

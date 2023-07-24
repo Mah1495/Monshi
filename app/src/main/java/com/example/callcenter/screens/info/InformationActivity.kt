@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Surface
 import com.example.callcenter.screens.ui.theme.CallCenterTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,9 +20,12 @@ fun Application.showInfo(number: String) {
 class InformationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
         setContent {
             CallCenterTheme {
-                informationScreen(intent.extras?.getString("number")!!)
+                Surface {
+                    informationScreen(intent.extras?.getString("number")!!)
+                }
             }
         }
     }

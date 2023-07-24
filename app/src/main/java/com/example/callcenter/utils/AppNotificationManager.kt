@@ -18,7 +18,7 @@ import com.example.callcenter.IncomingChannel
 import com.example.callcenter.OutGoingChannel
 import com.example.callcenter.R
 import com.example.callcenter.screens.call_screen.CallScreenActivity
-import com.example.callcenter.screens.incoming_call.CallIncomingActivity
+import com.example.callcenter.screens.incoming_call.IncomingCallActivity
 import javax.inject.Singleton
 
 
@@ -133,7 +133,7 @@ class AppNotificationManager(val app: Application) {
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
 
-        intent.setClass(app, CallIncomingActivity::class.java)
+        intent.setClass(app, IncomingCallActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(app, 123, intent, PendingIntent.FLAG_MUTABLE)
 
