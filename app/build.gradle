@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    namespace 'com.example.callcenter'
+    namespace 'ir.vvin.monshi'
     compileSdk 33
     dataBinding {
         enabled = true
     }
     defaultConfig {
-        applicationId "com.example.callcenter"
+        applicationId "ir.vvin.monshi"
         minSdk 29
         targetSdk 33
         versionCode 1

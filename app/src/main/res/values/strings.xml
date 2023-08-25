@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CallCenter</string>
+    <string name="app_name">Monshi</string>
     <string name="title_activity_dialer">Dialer</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
